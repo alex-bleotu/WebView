@@ -4,9 +4,9 @@ import { Button, StyleSheet, TextInput, View } from "react-native";
 
 export default function App() {
     const [name, setName] = useState("Thomas Jefferson");
-    const [cardNumber, setCardNumber] = useState("4918914107195005");
-    const [expiryMonth, setExpiryMonth] = useState("07");
-    const [expiryYear, setExpiryYear] = useState("28");
+    const [cardNumber, setCardNumber] = useState("4111111111111111");
+    const [expiryMonth, setExpiryMonth] = useState("12");
+    const [expiryYear, setExpiryYear] = useState("30");
     const [cvc, setCvc] = useState("200");
     const [amount, setAmount] = useState("1167");
 
@@ -56,16 +56,14 @@ export default function App() {
                 <Button
                     title="Pay"
                     onPress={() => {
-                        console.log({
-                            name,
-                            cardNumber,
+                        console.log("lol");
+                        paymentProcessorRef.current?.initiatePayment(
                             expiryMonth,
                             expiryYear,
-                            cvc,
-                            amount,
-                        });
-
-                        paymentProcessorRef.current?.initiatePayment(null);
+                            cardNumber,
+                            name,
+                            amount
+                        );
                     }}
                 />
             </View>

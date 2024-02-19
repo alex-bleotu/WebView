@@ -7,7 +7,13 @@ declare module "expo-payment-challenge" {
     }
 
     interface PaymentProcessorRef {
-        initiatePayment: (paymentData: any) => Promise<void>;
+        initiatePayment: (
+            cardExpiryMonth: string,
+            cardExpiryYear: string,
+            cardNumber: string,
+            cardHolderName: string,
+            purchaseAmount: string
+        ) => Promise<void>;
     }
 
     const PaymentProcessor: ForwardRefRenderFunction<
