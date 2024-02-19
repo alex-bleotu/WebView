@@ -56,7 +56,6 @@ export default function App() {
                 <Button
                     title="Pay"
                     onPress={() => {
-                        console.log("lol");
                         paymentProcessorRef.current?.initiatePayment(
                             expiryMonth,
                             expiryYear,

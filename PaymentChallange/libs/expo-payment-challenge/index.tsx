@@ -56,33 +56,48 @@ const PaymentProcessor = forwardRef<PaymentProcessorRef, PaymentProcessorProps>(
                     axios
                         .post(
                             "https://www.threedsecurempi.com/EMVTDS/API/AREQ",
-                            {
-                                api: {
-                                    version: "2.2.0.1.0",
-                                    istestcard: true,
-                                    isPIT: false,
-                                    compressed: false,
-                                    merchantidentifier: "WORLDPAY_INTERNETUSD",
-                                },
-                                messagetype: "AReq",
-                                message:
-                                    '{"messageType":"AReq","messageVersion":"2.1.0","messageCategory":"01","deviceChannel":"02","threeDSCompInd":"U","threeDSRequestorAuthenticationInd":"01","threeDSServerTransID":"ce908afc-e929-4894-b20d-d347d19a5df1","browserAcceptHeader":"*/*","browserIP":"77.137.78.83","browserJavaEnabled":false,"browserLanguage":"en-gb","browserColorDepth":"24","browserScreenHeight":"934","browserScreenWidth":"1255","browserTZ":"5","browserUserAgent":"Mozilla/5.0 Windows NT 10.0; Win64; x64 AppleWebKit/537.36 KHTML, like Gecko Chrome/116.0.0.0 Safari/537.36","notificationURL":"https://eu1.threedsecurempi.com/EMVTDS/jsp/CardHolder/BacktoMerchantWebsite.jsp","cardExpiryDate":"3012","acctNumber":"4111111111111111","cardholderName":"I am test","purchaseAmount":"111055","purchaseCurrency":"376","transType":"01"}',
-                            }
+                            body
                         )
                         .then((response) => {
-                            console.log(response.data);
-                            const transStatus = JSON.parse(
-                                response.data.message
-                            ).transStatus;
-                            if (transStatus === "Y") {
+                            const message = JSON.parse(response.data.message);
+                            if (message.transStatus === "Y") {
                                 setShowChallenge(false);
                                 onPaymentSuccess();
-                            } else if (transStatus === "N") {
+                            } else if (message.transStatus === "N") {
                                 setShowChallenge(false);
-                                onPaymentFailure(new Error("Payment failed"));
-                            } else if (transStatus === "C") {
+                                onPaymentFailure(new Error("Payment rejected"));
+                            } else if (message.transStatus === "C") {
                                 setChallengeHTML(html);
                                 setShowChallenge(true);
+
+                                console.log({
+                                    messageVersion: "2.2.0.1.0",
+                                    threeDSServerTransID:
+                                        message.threeDSServerTransID,
+                                    acsTransID: message.acsTransID,
+                                    messageType: "CReq",
+                                    challengeWindowSize: "05",
+                                    messageCategory: "01",
+                                    browserInfo: browserInfo,
+                                });
+
+                                axios
+                                    .post(message.acsURL, {
+                                        messageVersion: "2.2.0.1.0",
+                                        threeDSServerTransID:
+                                            message.threeDSServerTransID,
+                                        acsTransID: message.acsTransID,
+                                        messageType: "CReq",
+                                        challengeWindowSize: "05",
+                                        messageCategory: "01",
+                                        browserInfo: browserInfo,
+                                    })
+                                    .then((response) => {
+                                        console.log(response.data);
+                                    })
+                                    .catch((error) => {
+                                        console.log(error);
+                                    });
                             } else {
                                 onPaymentFailure(new Error("Payment failed"));
                             }
