@@ -9,8 +9,9 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "expo": "~50.0.6",
-    "expo-payment-challange": "file:./libs/expo-payment-challange",
+    "axios": "^1.6.7",
+    "expo": "~50.0.7",
+    "expo-payment-challenge": "file:./libs/expo-payment-challenge",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
     "react-native": "0.73.4",
