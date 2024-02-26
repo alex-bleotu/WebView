@@ -2,7 +2,7 @@ import axios from "axios";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { Modal, View } from "react-native";
 import WebView from "react-native-webview";
-import { html } from "../../html";
+import { html } from "./html";
 import { createBody, createRequestBody } from "./utils";
 
 interface PaymentProcessorProps {
@@ -67,37 +67,65 @@ const PaymentProcessor = forwardRef<PaymentProcessorRef, PaymentProcessorProps>(
                                 setShowChallenge(false);
                                 onPaymentFailure(new Error("Payment rejected"));
                             } else if (message.transStatus === "C") {
-                                setChallengeHTML(html);
+                                let challenge = html;
+                                // challenge = challenge.replace(
+                                //     "[acsurl]",
+                                //     message.acsURL
+                                // );
+                                console.log(
+                                    Buffer.from(
+                                        JSON.stringify({
+                                            messageVersion: "2.2.0.1.0",
+                                            threeDSServerTransID:
+                                                message.threeDSServerTransID,
+                                            acsTransID: message.acsTransID,
+                                            messageType: "CReq",
+                                            challengeWindowSize: "05",
+                                            messageCategory: "01",
+                                        })
+                                    )
+                                        .toString("base64")
+                                        .replace(/\+/g, "-")
+                                        .replace(/\//g, "_")
+                                        .replace(/=+$/, "")
+                                );
+                                // challenge = challenge.replace(
+                                //     "[creqjson]",
+                                //     Buffer.from(
+                                //         JSON.stringify({
+                                //             messageVersion: "2.2.0.1.0",
+                                //             threeDSServerTransID:
+                                //                 message.threeDSServerTransID,
+                                //             acsTransID: message.acsTransID,
+                                //             messageType: "CReq",
+                                //             challengeWindowSize: "05",
+                                //             messageCategory: "01",
+                                //         })
+                                //     )
+                                //         .toString("base64")
+                                //         .replace(/\+/g, "-")
+                                //         .replace(/\//g, "_")
+                                //         .replace(/=+$/, "")
+                                // );
+                                setChallengeHTML(challenge);
                                 setShowChallenge(true);
 
-                                console.log({
-                                    messageVersion: "2.2.0.1.0",
-                                    threeDSServerTransID:
-                                        message.threeDSServerTransID,
-                                    acsTransID: message.acsTransID,
-                                    messageType: "CReq",
-                                    challengeWindowSize: "05",
-                                    messageCategory: "01",
-                                    browserInfo: browserInfo,
-                                });
-
-                                axios
-                                    .post(message.acsURL, {
-                                        messageVersion: "2.2.0.1.0",
-                                        threeDSServerTransID:
-                                            message.threeDSServerTransID,
-                                        acsTransID: message.acsTransID,
-                                        messageType: "CReq",
-                                        challengeWindowSize: "05",
-                                        messageCategory: "01",
-                                        browserInfo: browserInfo,
-                                    })
-                                    .then((response) => {
-                                        console.log(response.data);
-                                    })
-                                    .catch((error) => {
-                                        console.log(error);
-                                    });
+                                // axios
+                                //     .post(message.acsURL, {
+                                //         messageVersion: "2.2.0.1.0",
+                                //         threeDSServerTransID:
+                                //             message.threeDSServerTransID,
+                                //         acsTransID: message.acsTransID,
+                                //         messageType: "CReq",
+                                //         challengeWindowSize: "05",
+                                //         messageCategory: "01",
+                                //     })
+                                //     .then((response) => {
+                                //         console.log(response.data);
+                                //     })
+                                //     .catch((error) => {
+                                //         console.log(error);
+                                //     });
                             } else {
                                 onPaymentFailure(new Error("Payment failed"));
                             }
