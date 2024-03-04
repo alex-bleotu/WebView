@@ -1,0 +1,23 @@
+{
+    "name": "payment-challenge",
+    "version": "1.0.0",
+    "description": "A NPM package to handle payment authentication for React Native apps.",
+    "main": "index.tsx",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "Bleotu Alex",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^1.6.7",
+        "base-64": "^1.0.0",
+        "react": "^18.2.0",
+        "react-native": "^0.73.5",
+        "react-native-webview": "^13.8.1"
+    },
+    "devDependencies": {
+        "@types/base-64": "^1.0.2",
+        "@types/react": "^18.2.61"
+    }
+}
